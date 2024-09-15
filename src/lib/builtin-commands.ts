@@ -13,6 +13,10 @@ export class BuiltinCommands {
 
   async run(cmd: string, args?: any[]) {
     if (!cmd.startsWith('$')) { cmd = '$' + cmd }
+    if (typeof this[cmd] !== 'function') {
+      throw new Error(`Unknown command: ${cmd}`)
+    }
+
     return args ? this[cmd](...args) : this[cmd]()
   }
 
