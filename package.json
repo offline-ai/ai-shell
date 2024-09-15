@@ -1,0 +1,93 @@
+{
+  "name": "@offline-ai/ai-shell",
+  "description": "AI Terminal Command Assistant",
+  "version": "0.1.0",
+  "author": "Riceball LEE <snowyu.lee@gmail.com>",
+  "bin": {
+    "ai": "./bin/run.js"
+  },
+  "homepage": "https://github.com/offline-ai/ai-shell.js",
+  "repository": "https://github.com/offline-ai/ai-shell.js",
+  "bugs": "https://github.com/@offline-ai/ai-shell.js/issues",
+  "dependencies": {
+    "@ein/bash-parser": "npm:@jsr/ein__bash-parser@^0.9.3",
+    "@isdk/ai-tool": "workspace:*",
+    "@isdk/ai-tool-agent": "workspace:*",
+    "@oclif/core": "^4",
+    "@offline-ai/cli-common": "workspace:*",
+    "@offline-ai/cli-plugin-core": "workspace:*",
+    "color-json": "^3.0.5",
+    "lodash-es": "^4.17.21",
+    "systeminformation": "^5.23.5",
+    "terminal-kit": "^3.1.1"
+  },
+  "devDependencies": {
+    "@oclif/prettier-config": "^0.2.1",
+    "@oclif/test": "^4",
+    "@types/chai": "^4",
+    "@types/lodash-es": "^4.17.12",
+    "@types/mocha": "^10",
+    "@types/node": "^20",
+    "chai": "^5",
+    "eslint": "^8",
+    "eslint-config-oclif": "^5.2.0",
+    "eslint-config-oclif-typescript": "^3",
+    "eslint-config-prettier": "^9",
+    "mocha": "^10",
+    "oclif": "^4.13.12",
+    "shx": "^0.3.4",
+    "ts-node": "^10",
+    "tsup": "^8.1.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "/bin",
+    "/dist",
+    "/lib",
+    "/oclif.manifest.json",
+    "/theme.json"
+  ],
+  "keywords": [
+    "oclif",
+    "prompt",
+    "ai",
+    "llm",
+    "ppe",
+    "programable prompt",
+    "agent",
+    "script",
+    "command",
+    "terminal",
+    "shell",
+    "assistant"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "type": "module",
+  "oclif": {
+    "bin": "ishell",
+    "dirname": "ishell",
+    "commands": "./dist/oclif/commands",
+    "plugins": [
+      "@offline-ai/cli-plugin-core"
+    ]
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsup",
+    "clean": "shx rm -fr oclif.manifest.json dist",
+    "lint": "eslint . --ext .ts",
+    "opack": "oclif pack",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "pnpm run lint",
+    "prepack": "NODE_OPTIONS='--trace-warnings --no-warnings=ExperimentalWarning' oclif manifest && oclif readme",
+    "release": "pnpm run clean && pnpm run build && pnpm run prepack && git add -f README.md && git ci -m 'docs: update readme' || true && pnpm dlx commit-and-tag-version -s",
+    "release.alpha": "pnpm run release -- --prerelease alpha",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif readme && git add README.md"
+  },
+  "types": "dist/index.d.ts"
+}
