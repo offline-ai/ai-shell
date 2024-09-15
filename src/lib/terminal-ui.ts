@@ -1,7 +1,8 @@
 import termKit from 'terminal-kit'
-import { DefaultAiShellLogLevel, getUserConfig, loadHistory, runAIScript, saveHistory } from './ai.js';
 import { validShellCmd } from './valid-shell-cmd.js';
 import { LogLevelMap } from '@isdk/ai-tool-agent';
+
+import { DefaultAiShellLogLevel, getUserConfig, loadHistory, runAIScript, saveHistory } from './ai.js';
 import { BuiltinCommands } from './builtin-commands.js';
 
 const ColorMap = {
