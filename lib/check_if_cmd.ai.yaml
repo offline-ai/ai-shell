@@ -1,0 +1,40 @@
+---
+description: |-
+  Check the prompt if is a command
+type: lib
+import:
+  "./sysinfo.js": [initializeModule]
+input:
+  - 0       # the prompt to check passed by position args
+  - content # the prompt to check passed by named args
+  # - os: {required: true}
+  # - shell: {required: true}
+output:
+  type: "object"
+  properties:
+    result:
+      type: "boolean"
+      description: "Whether the prompt is a command"
+    reasoning:
+      type: "string"
+      description: "The reasoning behind the result"
+    talkToUser:
+      type: "string"
+      description: "tell the user what to do"
+    # oringinal_answer:
+    #   type: "string"
+    #   description: "The original answer from the LLM"
+---
+- $if: "this[0] && !this.content"
+  then:
+    $set:
+      content: "?=this[0]"
+- system: |-
+    You are a best {{os}} computer command-line tools expert. You are very good at command-line tools, writing and communicate with the user.
+    You are now in the {{shell}} terminal, and you are asked to check the prompt if is a command.
+    You should explain the reasoning first and told the user what to do.
+- $if: "this.content"
+  then:
+    - user: "Prompt: {{content}}"
+    - assistant: "[[thinking]]"
+    - -> json(output)

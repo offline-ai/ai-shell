@@ -1,12 +1,14 @@
 ---
 description: |-
   Check if the command is safe to run.
+type: lib
 import:
   "./sysinfo.js": [initializeModule]
-  # "./parse-cmd.js": [parseShellCommand]
 input:
   - 0       # the command to check passed by position args
   - content # the command to check passed by named args
+  # - os: {required: true}
+  # - shell: {required: true}
 output:
   type: "object"
   properties:
@@ -26,9 +28,8 @@ output:
   then:
     $set:
       content: "?=this[0]"
-# The command has already been parsed into AST.
 - system: |-
-    You are a best {{os}} computer security expert. You are very good at command-line tools and AST(Abstract Syntax Tree) well, writing and communicate with the user.
+    You are a best {{os}} computer security expert. You are very good at command-line tools, writing and communicate with the user.
     You are now in the {{shell}} terminal, and you are asked to check if the command is safe to run.
     You should explain the reasoning first and told the user what to do.
 - $if: "this.content"

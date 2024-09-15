@@ -1,55 +1,26 @@
 import termKit from 'terminal-kit'
-// import computeAutoCompleteArray from 'terminal-kit/lib/autoComplete.js'
+import { DefaultAiShellLogLevel, getUserConfig, loadHistory, runAIScript, saveHistory } from './ai.js';
+import { validShellCmd } from './valid-shell-cmd.js';
+import { LogLevelMap } from '@isdk/ai-tool-agent';
+import { BuiltinCommands } from './builtin-commands.js';
 
-// const computeAutoCompleteArray = termKit.autoComplete
-
-
-/*
-const ast = await parseShellCommand('echo ciao; cmd 2>&1 | cat', {insertLOC: true});
-{
-  type: 'Script',
-  commands: [
-    {
-      type: 'Command',
-      name: {
-        text: 'echo', type: 'Word',
-        loc: {
-          start: { col: 1, row: 1, char: 0 },
-          end: { col: 4, row: 1, char: 3 }
-        }
-      },
-      suffix: [ { text: 'ciao', type: 'Word' } ],
-      loc: {
-        start: { col: 1, row: 1, char: 0 },
-        end: { col: 9, row: 1, char: 8 }
-      },
-    },
-    {
-      type: 'Pipeline',
-      commands: [
-        {
-          type: 'Command',
-          name: { text: 'cmd', type: 'Word' },
-          suffix: [
-            {
-              type: 'Redirect',
-              op: { text: '>&', type: 'Greatand' },
-              file: { text: '1', type: 'Word' },
-              numberIo: { text: '2', type: 'IoNumber' }
-            }
-          ]
-        },
-        { type: 'Command', name: { text: 'cat', type: 'Word' } }
-      ]
-    }
-  ]
+const ColorMap = {
+  user: 'blue',
+  userMessage: 'brightBlue',    // light green
+  ai: 'green',            // purple #AB47BC
+  aiMessage: 'brightGreen',    // 深橙色 (#FF7043)
+  hint: 'magenta',        // 洋红色
+  preview: 'gray',        // 灰色 (#9E9E9E)
+  cmd: '+',               // bold
+  warn: 'brightYellow',   // 橙色 (#FFA726)
+  error: 'brightRed',           // 红色 (#F44336)
+  important: 'brightMagenta',          // 洋红色 (#FF00FF 或 #AB00FF)
 }
-*/
 
-// (async function() {
-//   await terminalUI()
-// })()
-
+const color = Object.fromEntries(Object.entries(ColorMap).map(([k, v]) => {
+  const fn = ((name: string) => (s: string) => s.split('\n').map(i => '^[' + ColorMap[name] + ']' + i + '^').join('\n'))(k)
+  return [k, fn]
+}))
 
 export async function getTerminal() {
   const term = await termKit.getDetectedTerminal()
@@ -58,8 +29,15 @@ export async function getTerminal() {
 
 export async function terminalUI(term?: any) {
   if (!term) {term = await getTerminal()}
+  const history = loadHistory()
+  const userConfig = getUserConfig()
 
-  term.fullscreen(true) ;
+  process.once('exit', function () {
+    // Listener functions must only perform synchronous operations in exit event.
+    saveHistory(history)
+  });
+
+  // term.fullscreen(true) ;
   term.clear()
 
   const document = term.createDocument()
@@ -74,17 +52,10 @@ export async function terminalUI(term?: any) {
       rows: [
         {
           id: 'output_window',
-          // heightPercent: 100/4 * 3,
-          // columns: [
-          //   { id: 'output_window', widthPercent: 100 },
-          // ],
         },
         {
           id: 'progress_info',
-          height: 3, // must min is 3, 不然边框画不出来， 如果是1就会报错！
-          // columns: [
-          //   { id: 'progress_info', widthPercent: 100 },
-          // ],
+          height: 3,
         },
         {
           id: 'preview command',
@@ -97,103 +68,102 @@ export async function terminalUI(term?: any) {
         {
           id: 'input_prompt',
           height: 4,
-          // columns: [
-          //   { id: 'input_prompt', widthPercent: 100 },
-          // ],
         },
       ]
     }
   });
 
-  // const text = 'Permission is hereby ^Y^+granted^:, ^C^+free^ of charge, to any person obtaining a copy of this ^/software^ and associated documentation files (the ^/"Software"^:), to deal in the ^/Software^ without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the ^/Software^:, and to permit persons to whom the ^/Software^ is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice ^R^_shall^ be included in all copies or substantial portions of the ^/Software^:.\n\n^+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.' ;
-
-  const txt = new termKit.TextBox( {
+  const output = new termKit.TextBox({
     parent: document.elements.output_window ,
-    // content: text ,
     contentHasMarkup: true ,
     scrollable: true ,
     vScrollBar: true ,
-    //hScrollBar: true ,
-    //lineWrap: true ,
     wordWrap: true ,
     autoWidth: true ,
     autoHeight: true
-  } ) ;
+  });
 
-  const bar = new termKit.Bar( {
-    parent: document.elements.progress_info,
-    // x: 0,
-    // y: 0,
-    width: 15+3, // the content width
-    //barChars: 'classicWithArrow' ,
-    //barChars: 'classicWithHalf' ,
-    barChars: 'solid' ,
-    content: "Downloading..." ,
-    value: 0
-  } ) ;
+  output.appendLog = ((_appendLog, shellLogLevel) => function(s: string, logLevel: string = DefaultAiShellLogLevel) {
+    if (LogLevelMap[logLevel] >= LogLevelMap[shellLogLevel]) {
+      _appendLog.call(this, s)
+    }
+  })(output.appendLog, userConfig.shellLogLevel)
 
-  // command.setValue(value)
+  // const bar = new termKit.Bar( {
+  //   parent: document.elements.progress_info,
+  //   width: term.width - 20,
+  //   barChars: 'solid' ,
+  //   content: "Downloading..." ,
+  //   value: 0
+  // });
+  const bar = new termKit.TextBox({
+    parent: document.elements.progress_info ,
+    contentHasMarkup: true ,
+    wordWrap: true ,
+    autoWidth: true ,
+    autoHeight: true
+  });
+
+  userConfig.logUpdate = function(s: string) {
+    // console.log('🚀 ~ terminalUI ~ s:', s)
+
+    bar.setContent(s)
+  }
+
   const previewCommand = new termKit.LabeledInput( {
     parent: document.elements.preview_command,
-    // label: ':' ,
     autoWidth: true,
-  }) ;
+  });
+
   const btnRunCommand = new termKit.Button( {
     parent: document.elements.run_command,
-    content: '[Execute Command]:' ,
-    value: 'Execute' ,
-  }) ;
-  // txt.setContent('')
+    content: '[Execute Command]:',
+    value: 'Execute',
+  });
+
   const prompt = new termKit.InlineInput( {
     parent: document.elements.input_prompt,
-    placeholder: '^+type^ here' ,
+    placeholder: '^+type^ here',
     placeholderHasMarkup: true,
     prompt: {
-      // textAttr: { bgColor: 'blue' } ,
-      content: '^GPrompt>^:^B ' ,
+      content:  color.user('Prompt>') + ' ', // '^GPrompt>^:^B ',
       contentHasMarkup: true
     } ,
     width: 100,
     autoCompleteMenu: true ,
     autoCompleteHint: true ,
-    autoCompleteHintMinInput: 5 ,
-    // autoComplete: [],
-    autoComplete: (leftPart, useAutoCompleteMenu)=>{
-      const arr = [... new Set([...prompt.history])]
-      const result = termKit.autoComplete(arr, leftPart, useAutoCompleteMenu)
+    autoCompleteHintMinInput: 1,
+    autoComplete: async (leftPart, useAutoCompleteMenu) => {
+      const result = await promptAutoComplete.call(prompt, leftPart, useAutoCompleteMenu, ui)
       return result
     },
-    history: [],
+    history,
     cancelable: true,
-    // allowNewLine: true,
-    // height: 5 ,
-    // width: document.elements.input_prompt,
-  } ) ;
-  prompt.on( 'submit', function(value) {
-    txt.appendLog(value)
-    // txt.scrollToBottom()
-    let ix = prompt.history.indexOf(value)
-    if (ix >= 0) {
-      prompt.history.splice(ix, 1)
-      ix = prompt.contentArray.indexOf(value)
-      prompt.contentArray.splice(ix, 1)
-    }
-    prompt.history.push(value)
-    prompt.contentArray.push(value)
-    prompt.setValue('')
-  }) ;
-  prompt.on( 'cancel' , function(value) {
-    prompt.setValue('')
-  }) ;
+  });
 
-  btnRunCommand.on( 'submit' , ()=> {
-    // txt.appendContent( prompt.getValue() + ' exec!\n')
-    txt.appendLog('^+Execute^: '+previewCommand.getValue() + '::' + txt.contentHasMarkup)
-    txt.scrollToBottom()
-  }) ;
+  const ui: any = {output, previewCommand, term, prompt, btnRunCommand, document, layout, config: userConfig, history}
+  const builtinCommands = new BuiltinCommands(ui)
+  ui.builtinCommands = builtinCommands
+
+  prompt.on('submit', async function(value: string) {
+    await promptSubmit.call(prompt, value, ui)
+  });
+
+  prompt.on('cancel', function(_value) {
+    prompt.setValue('')
+  });
+
+  previewCommand.on('submit', async function(value: string) {
+    await runCommandSubmit.call(previewCommand, value, ui)
+  });
+
+  btnRunCommand.on('submit', async () => {
+    await runCommandSubmit.call(btnRunCommand, previewCommand.getValue(), ui)
+  });
 
   document.giveFocusTo(prompt)
-  term.on( 'key' , function( key ) {
+
+  term.on('key', function( key ) {
     switch( key ) {
       case 'CTRL_C':
         terminate(term)
@@ -207,9 +177,73 @@ function terminate(term: any) {
 	term.fullscreen( false ) ;
   term.hideCursor( false ) ;
   term.styleReset() ;
-  term.clear() ;
+  // term.clear() ;
 	// Add a 100ms delay, so the terminal will be ready when the process effectively exit, preventing bad escape sequences drop
 	setTimeout( function() { process.exit() ; } , 100 ) ;
+}
+
+async function promptAutoComplete(this: any, leftPart: string, useAutoCompleteMenu, ui?: any) {
+  let result: any[]
+  if (leftPart.startsWith('/')) {
+    // the builtin-commands
+    result = ui.builtinCommands.commands.map(cmd => '/' + cmd)
+  } else {
+    result = [... new Set([...this.history])]
+  }
+  result = termKit.autoComplete(result, leftPart, useAutoCompleteMenu)
+  return result
+}
+
+async function promptSubmit(this: any, value: string, {output, previewCommand, term, document, builtinCommands}: any) {
+  output.appendLog(color.user('User:') + ' ' +color.userMessage(value))
+  if (value.startsWith('/')) {
+    await builtinCommands.run(value.slice(1))
+    output.appendLog(color.cmd('Execute:') + ' ' + color.preview(value) + ': done')
+    return
+  } else {
+    // term = term.requestCursorLocation().saveCursor()
+    try {
+      // document.elements.progress_info.hide()
+      // term.moveTo( document.elements.progress_info.viewportX+6 , document.elements.progress_info.viewportY )
+      const isCmd = await runAIScript('check_if_cmd', {content: value})
+      output.appendLog(color.ai('AI<Think>:') + ' ' + color.aiMessage(isCmd.reasoning), 'debug')
+      output.appendLog(color.ai('AI<Hint>:') + ' ' + color.hint(isCmd.talkToUser), 'debug')
+      if (isCmd.result) {
+        try {
+          const cmd = validShellCmd(value)
+          const isSafeCmd = await runAIScript('check_if_cmd_safe', {content: value})
+          output.appendLog(color.ai('AI<Think>:') + ' ' + color.aiMessage(isSafeCmd.reasoning), 'debug')
+          if (isSafeCmd.todo.length) output.appendLog(color.ai('AI<Hint>:') + ' ' + color.hint(isSafeCmd.todo.join('\n')))
+        } catch(e: any) {
+          output.appendLog(color.error('Invalid command: ' + value + ' Error: ' + e.message), 'error')
+        }
+      }
+    } catch(e) {
+      console.log(e)
+    } finally {
+      // term.restoreCursor()
+      // document.draw()
+    }
+  }
+
+  // txt.scrollToBottom()
+  let ix = this.history.indexOf(value)
+  if (ix >= 0) {
+    this.history.splice(ix, 1)
+    ix = this.contentArray.indexOf(value)
+    this.contentArray.splice(ix, 1)
+  }
+  this.history.push(value)
+  this.contentArray.push(value)
+  this.setValue('')
+}
+
+async function runCommandSubmit(this: any, cmd: string, {output, previewCommand, document}: any) {
+  // output.appendLog(cmd)
+  output.appendLog('^+Execute^: '+ cmd + '::' + output.contentHasMarkup)
+  const o = Object.fromEntries(Object.entries(document.elements.progress_info).filter(([k, v]) => v != null && typeof v === 'number' ))
+  console.log('vvvvv==', o.viewportY)
+  // output.scrollToBottom()
 }
 
 export function showMessageOn(this: any, message: string, {x = 0, y = 0, color, bgColor}: {x: number, y: number, color?: string, bgColor?: string}) {
@@ -230,4 +264,10 @@ export function showMessageOn(this: any, message: string, {x = 0, y = 0, color, 
   } finally {
     term.restoreCursor()
   }
+}
+
+if (import.meta.url === new URL(process.argv[1], 'file://').href) {
+  (async function() {
+    await terminalUI()
+  })()
 }

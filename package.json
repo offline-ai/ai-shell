@@ -1,10 +1,10 @@
 {
   "name": "@offline-ai/ai-shell",
-  "description": "AI Terminal Command Assistant",
+  "description": "AI Shell(Terminal) Command Assistant",
   "version": "0.1.0",
   "author": "Riceball LEE <snowyu.lee@gmail.com>",
   "bin": {
-    "ai": "./bin/run.js"
+    "aish": "./bin/run.js"
   },
   "homepage": "https://github.com/offline-ai/ai-shell.js",
   "repository": "https://github.com/offline-ai/ai-shell.js",
@@ -19,7 +19,8 @@
     "color-json": "^3.0.5",
     "lodash-es": "^4.17.21",
     "systeminformation": "^5.23.5",
-    "terminal-kit": "^3.1.1"
+    "terminal-kit": "^3.1.1",
+    "util-ex": "2.0.0"
   },
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
@@ -69,9 +70,15 @@
   "main": "dist/index.js",
   "type": "module",
   "oclif": {
-    "bin": "ishell",
-    "dirname": "ishell",
-    "commands": "./dist/oclif/commands",
+    "additionalHelpFlags": [
+      "-h"
+    ],
+    "bin": "aish",
+    "dirname": "aish",
+    "commands": {
+      "strategy": "single",
+      "target": "./dist/oclif/commands/shell/index.js"
+    },
     "plugins": [
       "@offline-ai/cli-plugin-core"
     ]

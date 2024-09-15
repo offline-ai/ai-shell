@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'url';
 import fs from 'fs'
 import path from 'path'
-import cj from 'color-json'
 import {Flags} from '@oclif/core'
 import { LogLevelMap, logLevel, parseFrontMatter, parseYaml } from '@isdk/ai-tool-agent'
 
@@ -9,7 +8,8 @@ import {runScript} from '@offline-ai/cli-plugin-core'
 import { AICommand, AICommonFlags, expandPath, showBanner } from '@offline-ai/cli-common'
 import { getKeysPath, getMultiLevelExtname } from '@isdk/ai-tool'
 import { get as getByPath, omit } from 'lodash-es'
-import { getTerminal } from '../../../lib/terminal-ui.js'
+import { getTerminal, terminalUI } from '../../../lib/terminal-ui.js'
+import { setUserConfig } from '../../../lib/ai.js';
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -48,30 +48,16 @@ export default class AIShellCommand extends AICommand {
     if (hasBanner) {showBanner()}
 
 
-    userConfig.interactive = false
-
-    if (userConfig.stream) {
-      userConfig.streamEcho = 'line'
-      // if (typeof userConfig.streamEchoChars !== 'number') userConfig.streamEchoChars = term.width
-    }
-    if (!userConfig.agentsDir) {
-      userConfig.agentsDir = [scriptRootDir]
-    } else {
-      userConfig.agentsDir.push(scriptRootDir)
-    }
+    setUserConfig(userConfig)
 
     const term = await getTerminal()
-
-    const script = path.join(scriptRootDir, 'shell')
-
-    try {
-      let result = await runScript(script, userConfig)
-    } catch (error: any) {
-      if (error) {
-        console.log('🚀 ~ RunTest ~ run ~ error:', error)
-        this.error(error.message)
-      }
+    if (userConfig.stream) {
+      userConfig.streamEchoChars = term.width - 9
+      term.stdout.on('resize', () => {
+        if (typeof userConfig.streamEchoChars !== 'number') userConfig.streamEchoChars = term.width - 9
+      })
     }
+    await terminalUI(term)
 
   }
 }
