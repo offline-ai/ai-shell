@@ -92,15 +92,16 @@ Currently unsupported:
 - `export`: Set environment variables.
 
 <!-- toc -->
-- [AI Terminal Shell](#ai-terminal-shell)
-- [Quick Start](#quick-start)
-- [Install](#install)
-- [Features](#features)
-- [Terminal Screen Layout](#terminal-screen-layout)
-- [Usage Instructions](#usage-instructions)
-- [Common Commands](#common-commands)
-- [Commands](#commands)
-  - [`aish [FILE] [DATA]`](#aish-file-data)
+* [AI Terminal Shell](#ai-terminal-shell)
+* [Quick Start](#quick-start)
+* [Install](#install)
+* [start llama-server first, before starting](#start-llama-server-first-before-starting)
+* [Start ai shell](#start-ai-shell)
+* [Features](#features)
+* [Terminal Screen Layout](#terminal-screen-layout)
+* [Usage Instructions](#usage-instructions)
+* [Common Commands](#common-commands)
+* [Commands](#commands)
 <!-- tocstop -->
 
 # Commands
