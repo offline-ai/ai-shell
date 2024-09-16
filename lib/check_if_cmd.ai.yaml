@@ -12,15 +12,12 @@ input:
 output:
   type: "object"
   properties:
-    result:
-      type: "boolean"
-      description: "Whether the prompt is a command"
     reasoning:
       type: "string"
-      description: "The reasoning behind the result"
+      description: "explain the reasoning"
     command:
       type: "string"
-      description: "The command to run if the prompt is a task about command"
+      description: "Extract the command to run as posible"
     # answer:
     #   type: "string"
     #   description: "The original answer from the LLM"
