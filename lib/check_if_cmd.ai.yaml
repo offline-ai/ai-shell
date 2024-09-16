@@ -14,7 +14,7 @@ output:
   properties:
     reasoning:
       type: "string"
-      description: "explain the reasoning"
+      description: "Explain the reasons in a short sentence."
     command:
       type: "string"
       description: "Extract the command to run as posible"
