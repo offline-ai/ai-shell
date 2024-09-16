@@ -61,10 +61,10 @@ export function isSafeCommand(cmd: string|string[]) {
 
 export const ColorMap = {
   user: 'blue',
-  userMessage: 'brightBlue',    // light green
+  userMessage: 'gray',    // light green
   ai: 'blue',             // purple #AB47BC
-  aiMessage: 'magenta',   // 深橙色 (#FF7043)
-  hint: 'cyan',           // 洋红色
+  aiMessage: 'cyan',      // 深橙色 (#FF7043)
+  hint: 'magenta',        // 洋红色
   preview: 'gray',        // 灰色 (#9E9E9E)
   cmd: '+',               // bold
   warn: 'brightYellow',   // 橙色 (#FFA726)
