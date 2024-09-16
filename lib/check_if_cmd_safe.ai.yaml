@@ -35,5 +35,5 @@ output:
 - $if: "this.content"
   then:
     - user: "{{content}}"
-    - assistant: "[[thinking]]"
-    - -> json(output) -> $set(answer=thinking)
+    - assistant: "[[CheckIfCmdSafe]]"
+    - -> json(output) -> $set(answer=CheckIfCmdSafe)

@@ -31,5 +31,5 @@ output:
         Command: `{{command}}`
 
         Error: {{error}}
-    - assistant: "[[thinking]]"
-    - -> json(output) -> $set(answer=thinking)
+    - assistant: "[[CheckCmdError]]"
+    - -> json(output) -> $set(answer=CheckCmdError)
