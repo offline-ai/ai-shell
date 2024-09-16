@@ -17,8 +17,8 @@ output:
       description: "Whether the command is safe to run"
     reasoning:
       type: "string"
-      description: "The reasoning behind the result"
-    todo:
+      description: "Explain the reasons in a short sentence."
+    todo_steps:
       type: "array"
       items:
         type: "string"
