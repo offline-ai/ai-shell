@@ -1,0 +1,35 @@
+---
+description: |-
+  Check and explain the error of the command
+type: lib
+import:
+  "./sysinfo.js": [initializeModule]
+input:
+  - command: {required: true}
+  - error: {required: true}
+  - hint
+output:
+  type: "object"
+  properties:
+    reasoning:
+      type: "string"
+      # description: "Concise explanation of why the command not working"
+    command:
+      type: "string"
+      description: "Extract the corrected command to run if possible"
+---
+- system: |-
+    You are a best {{os}} computer command-line tools expert. You are very good at command-line tools and the {{command}} command, writing and communicate with the user.
+    You are now in the {{shell}} terminal, and you are asked to check the command why not working and correct it.
+    You should explain the reasoning first and chat with the user friendly.
+    Give the user the corrected command if possible.
+- $if: "this.command"
+  then:
+    - user: |-
+        {{hint}}
+        ---
+        Command: `{{command}}`
+
+        Error: {{error}}
+    - assistant: "[[thinking]]"
+    - -> json(output) -> $set(answer=thinking)
