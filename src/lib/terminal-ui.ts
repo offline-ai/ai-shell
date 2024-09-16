@@ -1,28 +1,16 @@
+import evts from 'events'
 import termKit from 'terminal-kit'
 import { validShellCmd } from './valid-shell-cmd.js';
 import { LogLevelMap } from '@isdk/ai-tool-agent';
 
+
 import { DefaultAiShellLogLevel, getUserConfig, loadHistory, runAIScript, saveHistory } from './ai.js';
-import { BuiltinCommands } from './builtin-commands.js';
+import { BuiltinCommands, color, elSetValue, getCommandsByAST, isDangerousCommand, isSafeCommand } from './builtin-commands.js';
+import { AstNodeScript } from '@ein/bash-parser';
 
-const ColorMap = {
-  user: 'blue',
-  userMessage: 'brightBlue',    // light green
-  ai: 'green',            // purple #AB47BC
-  aiMessage: 'brightGreen',    // 深橙色 (#FF7043)
-  hint: 'magenta',        // 洋红色
-  preview: 'gray',        // 灰色 (#9E9E9E)
-  cmd: '+',               // bold
-  warn: 'brightYellow',   // 橙色 (#FFA726)
-  error: 'brightRed',           // 红色 (#F44336)
-  important: 'brightMagenta',          // 洋红色 (#FF00FF 或 #AB00FF)
-}
+evts.defaultMaxListeners = 999
 
-const color = Object.fromEntries(Object.entries(ColorMap).map(([k, v]) => {
-  const fn = ((name: string) => (s: string) => s.split('\n').map(i => '^[' + ColorMap[name] + ']' + i + '^').join('\n'))(k)
-  return [k, fn]
-}))
-
+const CmdHistoryFileName = 'cmd_history.yaml'
 export async function getTerminal() {
   const term = await termKit.getDetectedTerminal()
   return term
@@ -31,14 +19,17 @@ export async function getTerminal() {
 export async function terminalUI(term?: any) {
   if (!term) {term = await getTerminal()}
   const history = loadHistory()
+  const cmdHistory = loadHistory(CmdHistoryFileName)
+
   const userConfig = getUserConfig()
 
   process.once('exit', function () {
     // Listener functions must only perform synchronous operations in exit event.
     saveHistory(history)
+    saveHistory(cmdHistory, CmdHistoryFileName)
   });
 
-  // term.fullscreen(true) ;
+  term.fullscreen(true) ;
   term.clear()
 
   const document = term.createDocument()
@@ -111,10 +102,30 @@ export async function terminalUI(term?: any) {
     bar.setContent(s)
   }
 
-  const previewCommand = new termKit.LabeledInput( {
+  // const previewCommand = new termKit.LabeledInput( {
+  //   parent: document.elements.preview_command,
+  //   autoWidth: true,
+  // });
+  const previewCommand = new termKit.InlineInput( {
     parent: document.elements.preview_command,
+    placeholder: '^+preview command^ here',
+    placeholderHasMarkup: true,
     autoWidth: true,
+    history: cmdHistory,
+    cancelable: true,
+    autoCompleteMenu: false,
+    autoCompleteHint: true,
+    autoCompleteHintMinInput: 1,
+    autoComplete: async (leftPart, useAutoCompleteMenu) => {
+      previewCommand.hint = undefined
+      let result = [... new Set([...previewCommand.history])]
+      result = termKit.autoComplete(result, leftPart, useAutoCompleteMenu)
+      return result
+    },
   });
+  // const keyBindings = {...previewCommand.keyBindings}
+  // delete keyBindings.TAB
+  // previewCommand.keyBindings = keyBindings
 
   const btnRunCommand = new termKit.Button( {
     parent: document.elements.run_command,
@@ -127,12 +138,12 @@ export async function terminalUI(term?: any) {
     placeholder: '^+type^ here',
     placeholderHasMarkup: true,
     prompt: {
-      content:  color.user('Prompt>') + ' ', // '^GPrompt>^:^B ',
+      content: color.user('Prompt>') + ' ', // '^GPrompt>^:^B ',
       contentHasMarkup: true
     } ,
     width: 100,
-    autoCompleteMenu: true ,
-    autoCompleteHint: true ,
+    autoCompleteMenu: true,
+    autoCompleteHint: true,
     autoCompleteHintMinInput: 1,
     autoComplete: async (leftPart, useAutoCompleteMenu) => {
       const result = await promptAutoComplete.call(prompt, leftPart, useAutoCompleteMenu, ui)
@@ -142,7 +153,7 @@ export async function terminalUI(term?: any) {
     cancelable: true,
   });
 
-  const ui: any = {output, previewCommand, term, prompt, btnRunCommand, document, layout, config: userConfig, history}
+  const ui: any = {output, previewCommand, term, prompt, btnRunCommand, document, layout, config: userConfig, history, cmdHistory}
   const builtinCommands = new BuiltinCommands(ui)
   ui.builtinCommands = builtinCommands
 
@@ -195,56 +206,103 @@ async function promptAutoComplete(this: any, leftPart: string, useAutoCompleteMe
   return result
 }
 
-async function promptSubmit(this: any, value: string, {output, previewCommand, term, document, builtinCommands}: any) {
+async function promptSubmit(this: any, value: string, {output, previewCommand, term, document, builtinCommands, prompt}: any) {
   output.appendLog(color.user('User:') + ' ' +color.userMessage(value))
+  addToHistory(this, value)
+  this.setValue('')
   if (value.startsWith('/')) {
-    await builtinCommands.run(value.slice(1))
-    output.appendLog(color.cmd('Execute:') + ' ' + color.preview(value) + ': done')
+    try {
+      await builtinCommands.run(value.slice(1))
+    } catch(e: any) {
+      output.appendLog(color.cmd('Execute:') + ' ' + color.preview(value) + ' ' + color.error('Error:') + ' ' + color.errorMessage(e.message), 'error')
+    }
     return
   } else {
-    // term = term.requestCursorLocation().saveCursor()
+    let cmdAst: AstNodeScript|undefined
+    let cmdNames: string[]|undefined
+    try {
+      cmdAst = await validShellCmd(value)
+      if (cmdAst) {
+        // output.appendLog(color.cmd('Execute:') + ' ' + color.preview(value) + ' ' + color.preview(JSON.stringify(cmdAst)), 'trace')
+        cmdNames = getCommandsByAST(cmdAst)
+        // output.appendLog(color.cmd('Commands:') + ' ' + color.preview(JSON.stringify(cmdNames)), 'trace')
+      }
+    } catch(err: any) {
+      output.appendLog(color.error('Error:') + ' ' + color.errorMessage(err.message), 'debug')
+    }
+    if (cmdNames?.length && isSafeCommand(cmdNames)) {
+      const err = await builtinCommands.runShellCmd(value)
+      if (!err) {
+        elSetValue(previewCommand, value)
+        document.giveFocusTo(prompt)
+      }
+      return
+    }
     try {
       // document.elements.progress_info.hide()
       // term.moveTo( document.elements.progress_info.viewportX+6 , document.elements.progress_info.viewportY )
-      const isCmd = await runAIScript('check_if_cmd', {content: value})
-      output.appendLog(color.ai('AI<Think>:') + ' ' + color.aiMessage(isCmd.reasoning), 'debug')
-      output.appendLog(color.ai('AI<Hint>:') + ' ' + color.hint(isCmd.talkToUser), 'debug')
-      if (isCmd.result) {
+      const isCmdInfo = await runAIScript('check_if_cmd', {content: value})
+      output.appendLog(color.ai('AI<Think>:') + ' ' + color.hint(isCmdInfo.reasoning), 'debug')
+      // output.appendLog(color.ai('AI<result>:') + ' ' + color.hint(JSON.stringify(isCmdInfo.result)), 'debug')
+      // output.appendLog(color.ai('AI<command>:') + ' ' + color.hint(isCmdInfo.command), 'debug')
+      output.appendLog(color.ai('AI:') + ' ' + color.aiMessage(isCmdInfo.answer))
+      if (isCmdInfo.result || isCmdInfo.command) {
+        if (isCmdInfo.command) {
+          output.appendLog(color.ai('AI<Command>:') + ' ' + color.hint(isCmdInfo.command), 'debug')
+          value = isCmdInfo.command
+        }
         try {
-          const cmd = validShellCmd(value)
-          const isSafeCmd = await runAIScript('check_if_cmd_safe', {content: value})
-          output.appendLog(color.ai('AI<Think>:') + ' ' + color.aiMessage(isSafeCmd.reasoning), 'debug')
-          if (isSafeCmd.todo.length) output.appendLog(color.ai('AI<Hint>:') + ' ' + color.hint(isSafeCmd.todo.join('\n')))
+          const checkSafeCmdInfo = await runAIScript('check_if_cmd_safe', {content: value})
+          output.appendLog(color.ai('AI<Think>:') + ' ' + color.hint(checkSafeCmdInfo.reasoning), 'debug')
+          if (checkSafeCmdInfo.todo.length) {
+            output.appendLog(color.ai('AI<Hint>:') + ' ' + color.important(checkSafeCmdInfo.todo.join('\n')))
+          }
+          let isSafe = checkSafeCmdInfo.result
+          if (isSafe && cmdNames?.length) {
+            isSafe = !isDangerousCommand(cmdNames)
+          }
+
+          elSetValue(previewCommand, value, isCmdInfo.answer)
+          if (!isSafe) {
+            output.appendLog(color.warn('Dangerous command: ') + ' ' + color.cmd(value), 'warn')
+          } else if (cmdNames?.length && isSafeCommand(cmdNames)) {
+            const err = await builtinCommands.runShellCmd(value)
+            return
+          }
+          output.appendLog(color.ai('AI:') + ' ' + color.hint('the command has already been put in the preview area, please check it, then enter or click [Execute Command] to execute'))
+          document.giveFocusTo(previewCommand)
         } catch(e: any) {
           output.appendLog(color.error('Invalid command: ' + value + ' Error: ' + e.message), 'error')
         }
       }
-    } catch(e) {
-      console.log(e)
+    } catch(e: any) {
+      output.appendLog(color.error('Error:') + ' ' + color.errorMessage(e.message))
     } finally {
       // term.restoreCursor()
       // document.draw()
     }
   }
 
-  // txt.scrollToBottom()
-  let ix = this.history.indexOf(value)
-  if (ix >= 0) {
-    this.history.splice(ix, 1)
-    ix = this.contentArray.indexOf(value)
-    this.contentArray.splice(ix, 1)
-  }
-  this.history.push(value)
-  this.contentArray.push(value)
-  this.setValue('')
 }
 
-async function runCommandSubmit(this: any, cmd: string, {output, previewCommand, document}: any) {
-  // output.appendLog(cmd)
-  output.appendLog('^+Execute^: '+ cmd + '::' + output.contentHasMarkup)
-  const o = Object.fromEntries(Object.entries(document.elements.progress_info).filter(([k, v]) => v != null && typeof v === 'number' ))
-  console.log('vvvvv==', o.viewportY)
-  // output.scrollToBottom()
+function addToHistory(el: any, value: string) {
+  if (!value) {return}
+  let ix = el.history.indexOf(value)
+  if (ix >= 0) {
+    el.history.splice(ix, 1)
+    ix = el.contentArray.indexOf(value)
+    el.contentArray.splice(ix, 1)
+  }
+  el.history.push(value)
+  el.contentArray.push(value)
+}
+
+async function runCommandSubmit(this: any, cmd: string, {output, previewCommand, document, builtinCommands}: any) {
+  addToHistory(previewCommand, cmd)
+  const err = await builtinCommands.runShellCmd(cmd)
+  if (!err) {
+    elSetValue(previewCommand, '')
+  }
 }
 
 export function showMessageOn(this: any, message: string, {x = 0, y = 0, color, bgColor}: {x: number, y: number, color?: string, bgColor?: string}) {

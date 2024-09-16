@@ -18,10 +18,10 @@ output:
     reasoning:
       type: "string"
       description: "The reasoning behind the result"
-    talkToUser:
+    command:
       type: "string"
-      description: "tell the user what to do"
-    # oringinal_answer:
+      description: "The command to run if the prompt is a task about command"
+    # answer:
     #   type: "string"
     #   description: "The original answer from the LLM"
 ---
@@ -31,10 +31,12 @@ output:
       content: "?=this[0]"
 - system: |-
     You are a best {{os}} computer command-line tools expert. You are very good at command-line tools, writing and communicate with the user.
-    You are now in the {{shell}} terminal, and you are asked to check the prompt if is a command.
-    You should explain the reasoning first and told the user what to do.
+    You are now in the {{shell}} terminal, and you are asked to check the prompt if is a command or a task about command.
+    You should explain the reasoning first and chat with the user friendly.
+    If not a command, tell the user provide a command or a task about command.
+    If a task about command, tell the user what command to run.
 - $if: "this.content"
   then:
     - user: "Prompt: {{content}}"
     - assistant: "[[thinking]]"
-    - -> json(output)
+    - -> json(output) -> $set(answer=thinking)

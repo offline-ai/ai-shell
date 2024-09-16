@@ -17,10 +17,12 @@
     "@offline-ai/cli-common": "workspace:*",
     "@offline-ai/cli-plugin-core": "workspace:*",
     "color-json": "^3.0.5",
+    "execa": "^9.3.1",
     "lodash-es": "^4.17.21",
     "systeminformation": "^5.23.5",
     "terminal-kit": "^3.1.1",
-    "util-ex": "2.0.0"
+    "util-ex": "2.0.0",
+    "which": "^4.0.0"
   },
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",

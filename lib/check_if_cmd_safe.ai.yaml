@@ -29,11 +29,11 @@ output:
     $set:
       content: "?=this[0]"
 - system: |-
-    You are a best {{os}} computer security expert. You are very good at command-line tools, writing and communicate with the user.
-    You are now in the {{shell}} terminal, and you are asked to check if the command is safe to run.
+    You are a best {{os}} computer security expert and the master of command-line tools. You are very good at command-line tools, writing and communicate with the user.
+    You are now in the {{shell}} terminal, and you are asked to check if the command is safe to run correctly.
     You should explain the reasoning first and told the user what to do.
 - $if: "this.content"
   then:
     - user: "{{content}}"
     - assistant: "[[thinking]]"
-    - -> json(output)
+    - -> json(output) -> $set(answer=thinking)

@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url';
 import { parseYaml, stringifyYaml } from '@isdk/ai-tool'
-import {runScript} from '@offline-ai/cli-plugin-core'
+import { runScript, translate } from '@offline-ai/cli-plugin-core'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -59,7 +59,7 @@ export function loadHistory(filename = HistoryFileName) {
 }
 
 export function saveHistory(history: any[], filename = HistoryFileName) {
-  if (userConfig?.inputsDir && Array.isArray(history) && history.length) {
+  if (userConfig?.inputsDir && Array.isArray(history)) {
     const filepath = path.join(userConfig.inputsDir, AIShellName, filename)
     const dirpath = path.dirname(filepath)
     if (!fs.existsSync(dirpath)) {
