@@ -24,7 +24,15 @@ export const DangerousCommands = [
   'su',
   'sudo',
   'rm',
+  `rmdir`,
   'mv',
+  'dd',
+  // windows
+  'del',
+  'rd',
+  'format',
+  'move',
+  'ren',
 ]
 
 export const CommonSafeCommands = [
@@ -33,6 +41,8 @@ export const CommonSafeCommands = [
   'clear',
   'pwd',
   'echo',
+  'pushd',
+  'popd',
   'cat',
   'less',
   'more',
@@ -46,6 +56,7 @@ export const CommonSafeCommands = [
   'cat',
   'less',
   'which',
+  'man',
   // Windows,
   'dir',
   'set',
@@ -183,8 +194,10 @@ export class BuiltinCommands {
         result = await execa({shell})(cmd)
       }
       if (result) {
-        output.appendLog(result.stdout)
-        if (result.stderr.trim()) output.appendLog(color.error('stderr') + ':\n' + color.errorMessage(result.stderr), 'error')
+        const stdout = result.stdout.trim()
+        const stderr = result.stderr.trim()
+        if (stdout) output.appendLog(stdout)
+        if (stderr) output.appendLog(color.error('stderr') + ':\n' + color.errorMessage(stderr), 'error')
       }
       output.appendLog(color.cmd('Execute:') + ' ' + color.preview(cmd) + ': done', 'verbose')
     } catch (err: any) {
