@@ -1,13 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url';
-import { parseYaml, stringifyYaml } from '@isdk/ai-tool'
+import { getPackageDir, parseYaml, stringifyYaml } from '@isdk/ai-tool'
 import { runScript, translate } from '@offline-ai/cli-plugin-core'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const scriptRootDir = path.join(__dirname, '..', '..', 'lib')
+const scriptRootDir = path.join(getPackageDir(__dirname), 'lib')
+
 const AIShellName = 'ai-shell'
 const HistoryFileName = 'history.yaml'
 
