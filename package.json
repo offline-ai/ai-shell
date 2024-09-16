@@ -16,6 +16,7 @@
     "@oclif/core": "^4",
     "@offline-ai/cli-common": "workspace:*",
     "@offline-ai/cli-plugin-core": "workspace:*",
+    "clipboardy": "^4.0.0",
     "color-json": "^3.0.5",
     "execa": "^9.3.1",
     "lodash-es": "^4.17.21",
