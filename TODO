@@ -1,3 +1,7 @@
 feat:
   ☐ Multi languages Supports
   ☐ Multi-round dialogue support
+bug:
+  The command StdIO should be stream ouput for long time task.
+  ☐ clipboard not work
+    ready to use https://github.com/sindresorhus/clipboardy
