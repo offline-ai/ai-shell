@@ -194,7 +194,7 @@ export class BuiltinCommands {
       const reason = await runAIScript('check_cmd_error', params)
 
       output.appendLog(color.ai('AI:') + ' ' + color.aiMessage(reason.answer))
-      output.appendLog(color.ai('AI<Hint>:') + ' ' + color.hint(reason.reasoning))
+      output.appendLog(color.ai('AI') + ':' + color.preview('<Hint>') + ':: ' + color.hint(reason.reasoning), 'verbose')
       const correctedCmd = reason.command?.trim()
       if (correctedCmd) {
         elSetValue(ui.previewCommand, correctedCmd)

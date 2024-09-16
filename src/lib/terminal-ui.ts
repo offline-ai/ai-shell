@@ -258,7 +258,7 @@ async function promptSubmit(this: any, value: string, {output, previewCommand, t
           }
           const securityTodos = checkSafeCmdInfo.todo_steps as string[]
           if (securityTodos.length) {
-            output.appendLog(color.ai('AI')+ ':' + color.important('<Security Hint>') + '::\n' + color.important(securityTodos.map((s, ix)=> ix + '. ' + s).join('\n')))
+            output.appendLog(color.ai('AI')+ ':' + color.preview('<Security Hint>') + '::\n' + color.important(securityTodos.map((s, ix)=> ix + '. ' + s).join('\n')))
           }
 
           elSetValue(previewCommand, value, isCmdInfo.answer)
