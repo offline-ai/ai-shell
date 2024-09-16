@@ -22,7 +22,7 @@ output:
       type: "array"
       items:
         type: "string"
-        description: "The suggested actions to take"
+        description: "The suggested detail actions step by step."
 ---
 - $if: "this[0] && !this.content"
   then:
