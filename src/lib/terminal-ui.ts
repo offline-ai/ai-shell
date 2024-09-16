@@ -243,10 +243,8 @@ async function promptSubmit(this: any, value: string, {output, previewCommand, t
       // term.moveTo( document.elements.progress_info.viewportX+6 , document.elements.progress_info.viewportY )
       const isCmdInfo = await runAIScript('check_if_cmd', {content: value})
       output.appendLog(color.ai('AI<Think>:') + ' ' + color.hint(isCmdInfo.reasoning), 'debug')
-      // output.appendLog(color.ai('AI<result>:') + ' ' + color.hint(JSON.stringify(isCmdInfo.result)), 'debug')
-      // output.appendLog(color.ai('AI<command>:') + ' ' + color.hint(isCmdInfo.command), 'debug')
-      output.appendLog(color.ai('AI:') + ' ' + color.aiMessage(isCmdInfo.answer))
-      if (isCmdInfo.result || isCmdInfo.command) {
+      output.appendLog(color.ai('AI:') + ': ' + color.aiMessage(isCmdInfo.answer))
+      if (isCmdInfo.command) {
         if (isCmdInfo.command) {
           output.appendLog(color.ai('AI<Command>:') + ' ' + color.hint(isCmdInfo.command), 'debug')
           value = isCmdInfo.command
@@ -254,22 +252,23 @@ async function promptSubmit(this: any, value: string, {output, previewCommand, t
         try {
           const checkSafeCmdInfo = await runAIScript('check_if_cmd_safe', {content: value})
           output.appendLog(color.ai('AI<Think>:') + ' ' + color.hint(checkSafeCmdInfo.reasoning), 'debug')
-          if (checkSafeCmdInfo.todo.length) {
-            output.appendLog(color.ai('AI<Hint>:') + ' ' + color.important(checkSafeCmdInfo.todo.join('\n')))
-          }
           let isSafe = checkSafeCmdInfo.result
           if (isSafe && cmdNames?.length) {
             isSafe = !isDangerousCommand(cmdNames)
+          }
+          const securityTodos = checkSafeCmdInfo.todo_steps as string[]
+          if (securityTodos.length) {
+            output.appendLog(color.ai('AI')+ ':' + color.important('<Security Hint>') + '::\n' + color.important(securityTodos.map((s, ix)=> ix + '. ' + s).join('\n')))
           }
 
           elSetValue(previewCommand, value, isCmdInfo.answer)
           if (!isSafe) {
             output.appendLog(color.warn('Dangerous command: ') + ' ' + color.cmd(value), 'warn')
           } else if (cmdNames?.length && isSafeCommand(cmdNames)) {
-            const err = await builtinCommands.runShellCmd(value)
+            await builtinCommands.runShellCmd(value)
             return
           }
-          output.appendLog(color.ai('AI:') + ' ' + color.hint('the command has already been put in the preview area, please check it, then enter or click [Execute Command] to execute'))
+          output.appendLog(color.ai('AI:') + ' ' + color.aiMessage('the command has already been put in the preview area, please check it, then enter or click [Execute Command] to execute'))
           document.giveFocusTo(previewCommand)
         } catch(e: any) {
           output.appendLog(color.error('Invalid command: ' + value + ' Error: ' + e.message), 'error')
