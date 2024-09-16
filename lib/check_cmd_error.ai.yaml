@@ -13,7 +13,7 @@ output:
   properties:
     reasoning:
       type: "string"
-      # description: "Concise explanation of why the command not working"
+      description: "Explain the reasons in a short sentence."
     command:
       type: "string"
       description: "Extract the corrected command to run if possible"
