@@ -88,7 +88,7 @@ export async function terminalUI(term?: any) {
   //   content: "Downloading..." ,
   //   value: 0
   // });
-  const bar = new termKit.TextBox({
+  const progress = new termKit.TextBox({
     parent: document.elements.progress_info ,
     contentHasMarkup: true ,
     wordWrap: true ,
@@ -99,7 +99,7 @@ export async function terminalUI(term?: any) {
   userConfig.logUpdate = function(s: string) {
     // console.log('🚀 ~ terminalUI ~ s:', s)
 
-    bar.setContent(s)
+    progress.setContent(s)
   }
 
   // const previewCommand = new termKit.LabeledInput( {
