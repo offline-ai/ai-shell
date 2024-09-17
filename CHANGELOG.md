@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.2](https://github.com/offline-ai/ai-shell.js/compare/v0.1.1...v0.1.2) (2024-09-17)
+
+
+### Bug Fixes
+
+* should display <EMPTY> if command no output ([573eb62](https://github.com/offline-ai/ai-shell.js/commit/573eb625ce1904ca8844e2e11bfcc07a98686856))
+* should switch focus to prompt if run previewCmd ok ([809069a](https://github.com/offline-ai/ai-shell.js/commit/809069ae670d3905de079428cb45bc6f8770100a))
+
+
+### Refactor
+
+* use @isdk/bash-parser package ([0580fe2](https://github.com/offline-ai/ai-shell.js/commit/0580fe2755a013623cc1b1469c6a3a728226a7fc))
+
 ## 0.1.1 (2024-09-16)
 
 
