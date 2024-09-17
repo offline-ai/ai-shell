@@ -10,7 +10,7 @@ The AI Terminal Shell is written in [Programmable Prompt Engine Language](https:
 [![Downloads/week](https://img.shields.io/npm/dw/%40offline-ai%2Fai-shell.svg)](https://npmjs.org/package/@offline-ai/ai-shell)
 
 
-[![asciicast](https://asciinema.org/a/676372.svg)](https://asciinema.org/a/676372)
+[![asciicast](https://asciinema.org/a/676375.svg)](https://asciinema.org/a/676375)
 
 # Quick Start
 

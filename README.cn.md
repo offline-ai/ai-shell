@@ -11,7 +11,7 @@
 
 这是一个基于人工智能技术开发的终端Shell，旨在提升用户的命令行操作体验。通过智能提示与分析，帮助用户更高效地执行任务。
 
-[![asciicast](https://asciinema.org/a/676372.svg)](https://asciinema.org/a/676372)
+[![asciicast](https://asciinema.org/a/676375.svg)](https://asciinema.org/a/676375)
 
 ## Install
 
