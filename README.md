@@ -9,6 +9,9 @@ The AI Terminal Shell is written in [Programmable Prompt Engine Language](https:
 [![Version](https://img.shields.io/npm/v/%40offline-ai%2Fai-shell.svg)](https://npmjs.org/package/@offline-ai/ai-shell)
 [![Downloads/week](https://img.shields.io/npm/dw/%40offline-ai%2Fai-shell.svg)](https://npmjs.org/package/@offline-ai/ai-shell)
 
+
+[![asciicast](https://asciinema.org/a/676372.svg)](https://asciinema.org/a/676372)
+
 # Quick Start
 
 # Install
@@ -92,16 +95,15 @@ Currently unsupported:
 - `export`: Set environment variables.
 
 <!-- toc -->
-* [AI Terminal Shell](#ai-terminal-shell)
-* [Quick Start](#quick-start)
-* [Install](#install)
-* [start llama-server first, before starting](#start-llama-server-first-before-starting)
-* [Start ai shell](#start-ai-shell)
-* [Features](#features)
-* [Terminal Screen Layout](#terminal-screen-layout)
-* [Usage Instructions](#usage-instructions)
-* [Common Commands](#common-commands)
-* [Commands](#commands)
+- [AI Terminal Shell](#ai-terminal-shell)
+- [Quick Start](#quick-start)
+- [Install](#install)
+- [Features](#features)
+- [Terminal Screen Layout](#terminal-screen-layout)
+- [Usage Instructions](#usage-instructions)
+- [Common Commands](#common-commands)
+- [Commands](#commands)
+  - [`aish [FILE] [DATA]`](#aish-file-data)
 <!-- tocstop -->
 
 # Commands
