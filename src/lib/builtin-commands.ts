@@ -15,7 +15,7 @@ import type {
   AstNodeSubshell,
   AstNodeUntil,
   AstNodeWhile,
-} from "@ein/bash-parser"
+} from "@isdk/bash-parser"
 
 import whereIs from 'which'
 import { runAIScript } from "./ai.js"
@@ -183,7 +183,7 @@ export class BuiltinCommands {
       shell = await whereIs(shell)
     }
     cmd = cmd.trim()
-    output.appendLog(color.cmd('Execute:') + ' ' + color.preview(cmd), 'verbose')
+    output.appendLog(color.cmd('Execute:') + ' ' + color.preview(cmd))
     try {
       let result: any
       if (cmd.startsWith('cd ')) {
@@ -196,8 +196,12 @@ export class BuiltinCommands {
       if (result) {
         const stdout = result.stdout.trim()
         const stderr = result.stderr.trim()
-        if (stdout) output.appendLog(stdout)
-        if (stderr) output.appendLog(color.error('stderr') + ':\n' + color.errorMessage(stderr), 'error')
+        if (stdout) {
+          output.appendLog(stdout)
+        } else {
+          output.appendLog(color.preview('<EMPTY>'))
+        }
+        if (stderr) output.appendLog(color.error('(stderr)') + ':: ' + color.preview(stderr), 'error')
       }
       output.appendLog(color.cmd('Execute:') + ' ' + color.preview(cmd) + ': done', 'verbose')
     } catch (err: any) {
