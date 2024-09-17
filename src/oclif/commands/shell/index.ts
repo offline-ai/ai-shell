@@ -1,4 +1,3 @@
-import { fileURLToPath } from 'url';
 import fs from 'fs'
 import path from 'path'
 import {Flags} from '@oclif/core'
@@ -10,11 +9,6 @@ import { getKeysPath, getMultiLevelExtname } from '@isdk/ai-tool'
 import { get as getByPath, omit } from 'lodash-es'
 import { getTerminal, terminalUI } from '../../../lib/terminal-ui.js'
 import { setUserConfig } from '../../../lib/ai.js';
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const scriptRootDir = path.join(__dirname, '..', '..', '..', '..', 'lib')
 
 export default class AIShellCommand extends AICommand {
   static summary = '💻 AI Shell'
