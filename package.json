@@ -10,7 +10,7 @@
   "repository": "https://github.com/offline-ai/ai-shell.js",
   "bugs": "https://github.com/@offline-ai/ai-shell.js/issues",
   "dependencies": {
-    "@ein/bash-parser": "npm:@jsr/ein__bash-parser@^0.9.3",
+    "@isdk/bash-parser": "^0.9.4",
     "@isdk/ai-tool": "workspace:*",
     "@isdk/ai-tool-agent": "workspace:*",
     "@oclif/core": "^4",
