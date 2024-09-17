@@ -182,6 +182,8 @@ export async function terminalUI(term?: any) {
         break
     }
   })
+
+  output.appendLog(color.preview("Welcome to AiShell! Press Ctrl+C to exit."))
 }
 
 function terminate(term: any) {
