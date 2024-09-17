@@ -6,7 +6,7 @@ import { LogLevelMap } from '@isdk/ai-tool-agent';
 
 import { DefaultAiShellLogLevel, getUserConfig, loadHistory, runAIScript, saveHistory } from './ai.js';
 import { BuiltinCommands, color, elSetValue, getCommandsByAST, isDangerousCommand, isSafeCommand } from './builtin-commands.js';
-import { AstNodeScript } from '@ein/bash-parser';
+import { AstNodeScript } from '@isdk/bash-parser';
 
 evts.defaultMaxListeners = 999
 
@@ -296,11 +296,12 @@ function addToHistory(el: any, value: string) {
   el.contentArray.push(value)
 }
 
-async function runCommandSubmit(this: any, cmd: string, {output, previewCommand, document, builtinCommands}: any) {
+async function runCommandSubmit(this: any, cmd: string, {output, prompt, previewCommand, document, builtinCommands}: any) {
   addToHistory(previewCommand, cmd)
   const err = await builtinCommands.runShellCmd(cmd)
   if (!err) {
     elSetValue(previewCommand, '')
+    document.giveFocusTo(prompt)
   }
 }
 
