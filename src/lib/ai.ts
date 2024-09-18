@@ -25,7 +25,11 @@ export function setUserConfig(config: any) {
     userConfig.shellLogLevel = DefaultAiShellLogLevel
   }
 
-  userConfig.logLevel = 'error'
+  if (userConfig.dev) {
+    userConfig.logLevel = userConfig.dev
+  } else {
+    userConfig.logLevel = 'error'
+  }
   if (userConfig.stream) {
     userConfig.streamEcho = 'line'
   }
