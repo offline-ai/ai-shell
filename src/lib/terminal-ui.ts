@@ -254,9 +254,10 @@ async function promptSubmit(this: any, value: string, {output, previewCommand, t
       output.appendLog(color.ai('AI:') + ': ' + color.aiMessage(isCmdInfo.answer))
       if (isCmdInfo.command) {
         if (isCmdInfo.command) {
-          output.appendLog(color.ai('AI<Command>:') + ' ' + color.hint(isCmdInfo.command), 'debug')
+          output.appendLog(color.ai('AI<Command>:') + ' ' + color.preview(isCmdInfo.command), 'debug')
           value = isCmdInfo.command
         }
+        elSetValue(previewCommand, value, isCmdInfo.answer)
         try {
           const checkSafeCmdInfo = await runAIScript('check_if_cmd_safe', {content: value})
           output.appendLog(color.ai('AI<Think>:') + ' ' + color.hint(checkSafeCmdInfo.reasoning), 'debug')
@@ -265,17 +266,25 @@ async function promptSubmit(this: any, value: string, {output, previewCommand, t
             isSafe = !isDangerousCommand(cmdNames)
           }
           const securityTodos = checkSafeCmdInfo.todo_steps as string[]
+
+          if (!isSafe) {
+            output.appendLog(color.warn('Dangerous command: ') + ' ' + color.cmd(value), 'warn')
+            if (checkSafeCmdInfo.reasoning) {
+              output.appendLog(color.warn('For: ') + ' ' + color.cmd(checkSafeCmdInfo.reasoning), 'warn')
+            }
+          } else {
+            output.appendLog(color.ai('AI:') + ' ' + color.aiMessage('The command seems to be safe to execute.'))
+          }
+
           if (securityTodos.length) {
             output.appendLog(color.ai('AI')+ ':' + color.preview('<Security Hint>') + '::\n' + color.important(securityTodos.map((s, ix)=> ix + '. ' + s).join('\n')))
           }
 
-          elSetValue(previewCommand, value, isCmdInfo.answer)
-          if (!isSafe) {
-            output.appendLog(color.warn('Dangerous command: ') + ' ' + color.cmd(value), 'warn')
-          } else if (cmdNames?.length && isSafeCommand(cmdNames)) {
+          if (isSafe && cmdNames?.length && isSafeCommand(cmdNames)) {
             await builtinCommands.runShellCmd(value)
             return
           }
+
           output.appendLog(color.ai('AI:') + ' ' + color.aiMessage('the command has already been put in the preview area, please check it, then enter or click [Execute Command] to execute'))
           document.giveFocusTo(previewCommand)
         } catch(e: any) {
