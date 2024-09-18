@@ -95,15 +95,16 @@ Currently unsupported:
 - `export`: Set environment variables.
 
 <!-- toc -->
-- [AI Terminal Shell](#ai-terminal-shell)
-- [Quick Start](#quick-start)
-- [Install](#install)
-- [Features](#features)
-- [Terminal Screen Layout](#terminal-screen-layout)
-- [Usage Instructions](#usage-instructions)
-- [Common Commands](#common-commands)
-- [Commands](#commands)
-  - [`aish [FILE] [DATA]`](#aish-file-data)
+* [AI Terminal Shell](#ai-terminal-shell)
+* [Quick Start](#quick-start)
+* [Install](#install)
+* [start llama-server first, before starting](#start-llama-server-first-before-starting)
+* [Start ai shell](#start-ai-shell)
+* [Features](#features)
+* [Terminal Screen Layout](#terminal-screen-layout)
+* [Usage Instructions](#usage-instructions)
+* [Common Commands](#common-commands)
+* [Commands](#commands)
 <!-- tocstop -->
 
 # Commands
@@ -118,9 +119,9 @@ Currently unsupported:
 ```
 USAGE
   $ aish  [FILE] [DATA] [--json] [-c <value>] [--banner] [-u <value>] [-s <value>...] [-l
-    silence|fatal|error|warn|info|verbose|debug|trace] [-h <value>] [-n] [-k] [-t <value> -i] [--no-chats] [--no-inputs
-    ] [-m] [-f <value>] [-d <value>] [-D <value>...] [-a <value>] [-b <value>] [-p <value>...] [-L <value>] [-A <value>]
-    [-e true|false|line] [-e <value>] [--consoleClear]
+    trace|debug|verbose|info|warn|error|fatal|silence] [--histories <value>] [-n] [-k] [-t <value> -i] [--no-chats]
+    [--no-inputs ] [-m] [-f <value>] [-d <value>] [-D <value>...] [-a <value>] [-b <value>] [-p <value>...] [-L <value>]
+    [-A <value>] [-e true|false|line] [-e <value>] [--consoleClear]
 
 ARGUMENTS
   FILE  the script file path, or the json data when `-f` switch is set
@@ -140,11 +141,10 @@ FLAGS
                                        <options: true|false|line>
   -e, --streamEchoChars=<value>        stream echo max characters limit, defaults to no limit
   -f, --script=<value>                 the ai-agent script file name or id
-  -h, --histories=<value>              the chat histories folder to record
   -i, --[no-]interactive               interactive mode
   -k, --backupChat                     whether to backup chat history before start, defaults to false
   -l, --logLevel=<option>              the log level
-                                       <options: silence|fatal|error|warn|info|verbose|debug|trace>
+                                       <options: trace|debug|verbose|info|warn|error|fatal|silence>
   -m, --[no-]stream                    stream mode, defaults to true
   -n, --[no-]newChat                   whether to start a new chat history, defaults to false in interactive mode, true
                                        in non-interactive
@@ -154,6 +154,7 @@ FLAGS
   -u, --api=<value>                    the api URL
       --[no-]banner                    show banner
       --[no-]consoleClear              Whether console clear after stream echo output, default to true
+      --histories=<value>              the chat histories folder to record
       --no-chats                       disable chat histories, defaults to false
       --no-inputs                      disable input histories, defaults to false
 
