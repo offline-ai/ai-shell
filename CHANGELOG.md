@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.4](https://github.com/offline-ai/ai-shell.js/compare/v0.1.3...v0.1.4) (2024-09-18)
+
+
+### Features
+
+* add dev and logFile options ([5c733b2](https://github.com/offline-ai/ai-shell.js/commit/5c733b2f3be2e1daf39eea3545c4dbc7666009ed))
+
+
+### Bug Fixes
+
+* keep KISS ([9560584](https://github.com/offline-ai/ai-shell.js/commit/95605844f34af37cfee8b397d2b85064f8f7d38f))
+
+
+### Refactor
+
+* more ui friendly ([78d27d9](https://github.com/offline-ai/ai-shell.js/commit/78d27d9c9ec1f6f90482e7f82bd0736964dc1ddc))
+* use dev option as development logLevel ([1871ea2](https://github.com/offline-ai/ai-shell.js/commit/1871ea2fb57f57038ca5e80e7cb51d0cb616f615))
+
 ## [0.1.3](https://github.com/offline-ai/ai-shell.js/compare/v0.1.2...v0.1.3) (2024-09-17)
 
 
