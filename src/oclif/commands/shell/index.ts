@@ -21,12 +21,20 @@ export default class AIShellCommand extends AICommand {
 
   static flags = {
     ...AICommand.flags,
-    ...AICommonFlags,
+    ...omit(AICommonFlags, ['stream', 'dataFile', 'data', 'arguments', 'streamEcho', 'streamEchoChars']),
     stream: Flags.boolean({char: 'm', description: 'stream mode, defaults to true', allowNo: true, default: true}),
     'consoleClear': Flags.boolean({
       aliases: ['console-clear', 'ConsoleClear', 'Console-clear', 'Console-Clear'],
       description: 'Whether console clear after stream output, default to true in interactive, false to non-interactive',
       allowNo: true,
+    }),
+    'logFile': Flags.string({
+      aliases: ['log-file'],
+      description: 'start to log into the file',
+    }),
+    'dev': Flags.string({
+      description: 'development log level, default to info(internal)',
+      options: Object.keys(LogLevelMap),
     }),
   }
 
@@ -40,7 +48,6 @@ export default class AIShellCommand extends AICommand {
     const hasBanner = userConfig.banner ?? userConfig.interactive
 
     if (hasBanner) {showBanner()}
-
 
     setUserConfig(userConfig)
 

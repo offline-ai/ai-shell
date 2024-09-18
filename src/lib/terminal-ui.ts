@@ -1,3 +1,4 @@
+import fs from 'fs'
 import evts from 'events'
 import termKit from 'terminal-kit'
 import { validShellCmd } from './valid-shell-cmd.js';
@@ -75,8 +76,13 @@ export async function terminalUI(term?: any) {
     autoHeight: true
   });
 
+  const stripAnsiCodes = str => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
   output.appendLog = ((_appendLog, shellLogLevel) => function(s: string, logLevel: string = DefaultAiShellLogLevel) {
     if (LogLevelMap[logLevel] >= LogLevelMap[shellLogLevel]) {
+      if (userConfig.logFile) {
+        fs.writeFileSync(userConfig.logFile, stripAnsiCodes(s) + '\n', {flag: 'a'})
+      }
       _appendLog.call(this, s)
     }
   })(output.appendLog, userConfig.shellLogLevel)

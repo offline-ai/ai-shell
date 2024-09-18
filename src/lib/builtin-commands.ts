@@ -151,8 +151,26 @@ export function getCommandsByAST(ast: AstNodeScript|AstNodeCompoundList) {
   return result
 }
 
+function logToOutput(logLevel: string, output: any, args: any[]) {
+  const oldContentHasMarkup= output.contentHasMarkup
+  try {
+    output.contentHasMarkup = 'legacyAnsi'
+    output.appendLog(args.map(i => typeof i === 'string' ? i : JSON.stringify(i)).join(' '), logLevel)
+  } finally {
+    output.contentHasMarkup = oldContentHasMarkup
+  }
+}
+
 export class BuiltinCommands {
   constructor(public ui: any) {
+    const output = ui.output
+    console.error = (...args) => {
+      logToOutput('error', output, args)
+    }
+
+    console.log = (...args) => {
+      logToOutput('debug', output, args)
+    }
   }
 
   get commands() {
