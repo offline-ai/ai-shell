@@ -8,6 +8,7 @@ import { LogLevelMap } from '@isdk/ai-tool-agent';
 import { DefaultAiShellLogLevel, getUserConfig, loadHistory, runAIScript, saveHistory } from './ai.js';
 import { BuiltinCommands, color, elSetValue, getCommandsByAST, isDangerousCommand, isSafeCommand } from './builtin-commands.js';
 import { AstNodeScript } from '@isdk/bash-parser';
+import { uText } from '@offline-ai/cli-common';
 
 evts.defaultMaxListeners = 999
 
@@ -189,6 +190,7 @@ export async function terminalUI(term?: any) {
     }
   })
 
+  output.appendLog(color.preview(uText('Ai Shell',{color: 'none'})))
   output.appendLog(color.preview("Welcome to AiShell! Press Ctrl+C to exit."))
 }
 
