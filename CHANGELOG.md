@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.5](https://github.com/offline-ai/ai-shell.js/compare/v0.1.4...v0.1.5) (2024-09-19)
+
+
+### Features
+
+* add AiShell logo ([bf7f03a](https://github.com/offline-ai/ai-shell.js/commit/bf7f03a1ab3a3384f0dc178b4abc42e90f4499dd))
+
 ## [0.1.4](https://github.com/offline-ai/ai-shell.js/compare/v0.1.3...v0.1.4) (2024-09-18)
 
 
