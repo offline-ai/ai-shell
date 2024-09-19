@@ -110,26 +110,36 @@ Currently unsupported:
 # Commands
 
 <!-- commands -->
-* [`aish`](#aish)
+* [`aish [FILE] [DATA]`](#aish-file-data)
 
-## `aish`
+## `aish [FILE] [DATA]`
 
-💻 AI Shell
+💻 Run ai-agent script file.
 
 ```
 USAGE
-  $ aish  [--json] [-c <value>] [--banner] [-u <value>] [-s <value>...] [-l
+  $ aish  [FILE] [DATA] [--json] [-c <value>] [--banner] [-u <value>] [-s <value>...] [-l
     trace|debug|verbose|info|warn|error|fatal|silence] [--histories <value>] [-n] [-k] [-t <value> -i] [--no-chats]
-    [--no-inputs ] [-f <value>] [-b <value>] [-p <value>...] [-L <value>] [-A <value>] [-m] [--consoleClear] [--logFile
-    <value>] [--dev trace|debug|verbose|info|warn|error|fatal|silence]
+    [--no-inputs ] [-m] [-f <value>] [-d <value>] [-D <value>...] [-a <value>] [-b <value>] [-p <value>...] [-L <value>]
+    [-A <value>] [-e true|false|line] [-e <value>] [--consoleClear]
+
+ARGUMENTS
+  FILE  the script file path, or the json data when `-f` switch is set
+  DATA  the json data which will be passed to the ai-agent script
 
 FLAGS
   -A, --aiPreferredLanguage=<value>    the ISO 639-1 code for the AI preferred language to translate the user input
                                        automatically, eg, en, etc.
+  -D, --data=<value>...                the data which will be passed to the ai-agent script: key1=value1 key2=value2
   -L, --userPreferredLanguage=<value>  the ISO 639-1 code for the user preferred language to translate the AI result
                                        automatically, eg, en, zh, ja, ko, etc.
+  -a, --arguments=<value>              the json data which will be passed to the ai-agent script
   -b, --brainDir=<value>               the brains(LLM) directory
   -c, --config=<value>                 the config file
+  -d, --dataFile=<value>               the data file which will be passed to the ai-agent script
+  -e, --streamEcho=<option>            [default: true] stream echo mode, defaults to true
+                                       <options: true|false|line>
+  -e, --streamEchoChars=<value>        stream echo max characters limit, defaults to no limit
   -f, --script=<value>                 the ai-agent script file name or id
   -i, --[no-]interactive               interactive mode
   -k, --backupChat                     whether to backup chat history before start, defaults to false
@@ -143,12 +153,8 @@ FLAGS
   -t, --inputs=<value>                 the input histories folder for interactive mode to record
   -u, --api=<value>                    the api URL
       --[no-]banner                    show banner
-      --[no-]consoleClear              Whether console clear after stream output, default to true in interactive, false
-                                       to non-interactive
-      --dev=<option>                   development log level, default to info(internal)
-                                       <options: trace|debug|verbose|info|warn|error|fatal|silence>
+      --[no-]consoleClear              Whether console clear after stream echo output, default to true
       --histories=<value>              the chat histories folder to record
-      --logFile=<value>                start to log into the file
       --no-chats                       disable chat histories, defaults to false
       --no-inputs                      disable input histories, defaults to false
 
@@ -156,12 +162,13 @@ GLOBAL FLAGS
   --json  Format output as json.
 
 DESCRIPTION
-  💻 AI Shell
+  💻 Run ai-agent script file.
 
-  The Smart Terminal allow you to use commands in natural language, so you no longer have to worry about forgetting
-  commands and parameters.
+  Execute ai-agent script file and return result. with `-i` to interactive.
 
 EXAMPLES
-  $ aish
+  $ aish  -f ./script.yaml "{content: 'hello world'}" -l info
+  ┌────────────────────
+  │[info]:Start Script: ...
 ```
 <!-- commandsstop -->
