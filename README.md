@@ -121,7 +121,7 @@ USAGE
   $ aish  [FILE] [DATA] [--json] [-c <value>] [--banner] [-u <value>] [--apiKey <value>] [-s
     <value>...] [-l trace|debug|verbose|info|warn|error|fatal|silence] [--histories <value>] [-n] [-k] [-t <value> -i]
     [--no-chats] [--no-inputs ] [-m] [-f <value>] [-d <value>] [-D <value>...] [-a <value>] [-b <value>] [-p <value>...]
-    [-L <value>] [-A <value>] [-e true|false|line] [-e <value>] [--consoleClear]
+    [-L <value>] [-A <value>] [-e true|false|line] [-e <value>] [-P <value>] [--consoleClear]
 
 ARGUMENTS
   FILE  the script file path, or the json data when `-f` switch is set
@@ -133,6 +133,7 @@ FLAGS
   -D, --data=<value>...                the data which will be passed to the ai-agent script: key1=value1 key2=value2
   -L, --userPreferredLanguage=<value>  the ISO 639-1 code for the user preferred language to translate the AI result
                                        automatically, eg, en, zh, ja, ko, etc.
+  -P, --provider=<value>               the LLM provider, defaults to llamacpp
   -a, --arguments=<value>              the json data which will be passed to the ai-agent script
   -b, --brainDir=<value>               the brains(LLM) directory
   -c, --config=<value>                 the config file
