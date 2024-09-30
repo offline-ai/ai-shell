@@ -119,9 +119,10 @@ Currently unsupported:
 ```
 USAGE
   $ aish  [FILE] [DATA] [--json] [-c <value>] [--banner] [-u <value>] [--apiKey <value>] [-s
-    <value>...] [-l trace|debug|verbose|info|warn|error|fatal|silence] [--histories <value>] [-n] [-k] [-t <value> -i]
-    [--no-chats] [--no-inputs ] [-m] [-f <value>] [-d <value>] [-D <value>...] [-a <value>] [-b <value>] [-p <value>...]
-    [-L <value>] [-A <value>] [-e true|false|line] [-e <value>] [-P <value>] [--consoleClear]
+    <value>...] [--logLevelMaxLen <value> -l trace|debug|verbose|info|notice|warn|error|fatal|silence] [--histories
+    <value>] [-n] [-k] [-t <value> -i] [--no-chats] [--no-inputs ] [-m] [-f <value>] [-d <value>] [-D <value>...] [-a
+    <value>] [-b <value>] [-p <value>...] [-L <value>] [-A <value>] [-e true|false|line] [-e <value>] [-P <value>]
+    [--consoleClear]
 
 ARGUMENTS
   FILE  the script file path, or the json data when `-f` switch is set
@@ -145,7 +146,7 @@ FLAGS
   -i, --[no-]interactive               interactive mode
   -k, --backupChat                     whether to backup chat history before start, defaults to false
   -l, --logLevel=<option>              the log level
-                                       <options: trace|debug|verbose|info|warn|error|fatal|silence>
+                                       <options: trace|debug|verbose|info|notice|warn|error|fatal|silence>
   -m, --[no-]stream                    stream mode, defaults to true
   -n, --[no-]newChat                   whether to start a new chat history, defaults to false in interactive mode, true
                                        in non-interactive
@@ -157,6 +158,7 @@ FLAGS
       --[no-]banner                    show banner
       --[no-]consoleClear              Whether console clear after stream echo output, default to true
       --histories=<value>              the chat histories folder to record
+      --logLevelMaxLen=<value>         the max length of log item to display
       --no-chats                       disable chat histories, defaults to false
       --no-inputs                      disable input histories, defaults to false
 
