@@ -165,7 +165,13 @@ export async function terminalUI(term?: any) {
   ui.builtinCommands = builtinCommands
 
   prompt.on('submit', async function(value: string) {
-    await promptSubmit.call(prompt, value, ui)
+    const ts = Date.now()
+    try {
+      await promptSubmit.call(prompt, value, ui)
+    } finally {
+      // display the execution time(seconds):
+      output.appendLog(color.preview(`Execution time: ${(Date.now() - ts) / 1000}s`), 'verbose')
+    }
   });
 
   prompt.on('cancel', function(_value) {
@@ -279,7 +285,8 @@ async function promptSubmit(this: any, value: string, {output, previewCommand, t
           }
 
           if (securityTodos.length) {
-            output.appendLog(color.ai('AI')+ ':' + color.preview('<Security Hint>') + '::\n' + color.important(securityTodos.map((s, ix)=> ix + '. ' + s).join('\n')))
+            const todosStr = securityTodos.length === 1 ? securityTodos[0] : securityTodos.map((s, ix)=> ++ix + '. ' + s).join('\n')
+            output.appendLog(color.ai('AI')+ ':' + color.preview('<Security Hint>') + '::\n' + color.important(todosStr))
           }
 
           if (isSafe && cmdNames?.length && isSafeCommand(cmdNames)) {
@@ -316,11 +323,17 @@ function addToHistory(el: any, value: string) {
 }
 
 async function runCommandSubmit(this: any, cmd: string, {output, prompt, previewCommand, document, builtinCommands}: any) {
-  addToHistory(previewCommand, cmd)
-  const err = await builtinCommands.runShellCmd(cmd)
-  if (!err) {
-    elSetValue(previewCommand, '')
-    document.giveFocusTo(prompt)
+  const ts = Date.now()
+  try {
+    addToHistory(previewCommand, cmd)
+    const err = await builtinCommands.runShellCmd(cmd)
+    if (!err) {
+      elSetValue(previewCommand, '')
+      document.giveFocusTo(prompt)
+    }
+  } finally {
+    // display the execution time(seconds):
+    output.appendLog(color.preview(`Execution time: ${(Date.now() - ts) / 1000}s`), 'verbose')
   }
 }
 
