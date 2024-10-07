@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.11](https://github.com/offline-ai/ai-shell.js/compare/v0.1.10...v0.1.11) (2024-10-07)
+
+
+### Features
+
+* display the execute time in verbose ([f28bad4](https://github.com/offline-ai/ai-shell.js/commit/f28bad4865fd4a8812733bbb39643ef26c2c769d))
+
 ## [0.1.10](https://github.com/offline-ai/ai-shell.js/compare/v0.1.9...v0.1.10) (2024-10-04)
 
 ## [0.1.9](https://github.com/offline-ai/ai-shell.js/compare/v0.1.8...v0.1.9) (2024-09-30)
