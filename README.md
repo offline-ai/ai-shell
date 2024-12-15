@@ -119,10 +119,10 @@ Currently unsupported:
 ```
 USAGE
   $ aish  [FILE] [DATA] [--json] [--config <value>] [--banner] [-u <value>] [--apiKey <value>] [-s
-    <value>...] [--logLevelMaxLen <value> -l trace|debug|verbose|info|notice|warn|error|fatal|silence] [--histories
-    <value>] [-n] [-k] [-t <value> -i] [--no-chats] [--no-inputs ] [-m] [-f <value>] [-d <value>] [-D <value>...] [-a
-    <value>] [-b <value>] [-p <value>...] [-L <value>] [-A <value>] [-e true|false|line] [-C <value>] [-P <value>]
-    [--consoleClear]
+    <value>...] [--logLevelMaxLen <value> -l trace|debug|verbose|info|notice|warn|error|fatal|print|silence]
+    [--histories <value>] [-n] [-k] [-t <value> -i] [--no-chats] [--no-inputs ] [-m] [-f <value>] [-d <value>] [-D
+    <value>...] [-a <value>] [-b <value>] [-p <value>...] [-L <value>] [-A <value>] [-e true|false|line] [-C <value>]
+    [-P <value>] [--consoleClear]
 
 ARGUMENTS
   FILE  the script file path, or the json data when `-f` switch is set
@@ -139,13 +139,13 @@ FLAGS
   -a, --arguments=<value>              the json data which will be passed to the ai-agent script
   -b, --brainDir=<value>               the brains(LLM) directory
   -d, --dataFile=<value>               the data file which will be passed to the ai-agent script
-  -e, --streamEcho=<option>            [default: line] stream echo mode, defaults to true
+  -e, --streamEcho=<option>            [default: line] stream echo mode
                                        <options: true|false|line>
   -f, --script=<value>                 the ai-agent script file name or id
   -i, --[no-]interactive               interactive mode
   -k, --backupChat                     whether to backup chat history before start, defaults to false
   -l, --logLevel=<option>              the log level
-                                       <options: trace|debug|verbose|info|notice|warn|error|fatal|silence>
+                                       <options: trace|debug|verbose|info|notice|warn|error|fatal|print|silence>
   -m, --[no-]stream                    stream mode, defaults to true
   -n, --[no-]newChat                   whether to start a new chat history, defaults to false in interactive mode, true
                                        in non-interactive
