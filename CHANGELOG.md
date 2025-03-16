@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.25](https://github.com/offline-ai/ai-shell.js/compare/v0.1.24...v0.1.25) (2025-03-16)
+
 ## [0.1.24](https://github.com/offline-ai/ai-shell.js/compare/v0.1.23...v0.1.24) (2025-03-16)
 
 
