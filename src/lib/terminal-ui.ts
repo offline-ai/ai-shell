@@ -2,6 +2,7 @@ import fs from 'fs'
 import evts from 'events'
 import termKit from 'terminal-kit'
 import { validShellCmd } from './valid-shell-cmd.js';
+// @ts-ignore
 import { LogLevelMap } from '@isdk/ai-tool-agent';
 
 
