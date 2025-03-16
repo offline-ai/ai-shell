@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.24](https://github.com/offline-ai/ai-shell.js/compare/v0.1.23...v0.1.24) (2025-03-16)
+
+
+### Bug Fixes
+
+* make ts happy ([409ce2b](https://github.com/offline-ai/ai-shell.js/commit/409ce2b2f0aafc20f34d3bc0549008530c7abdfe))
+
 ## [0.1.23](https://github.com/offline-ai/ai-shell.js/compare/v0.1.22...v0.1.23) (2025-03-16)
 
 ## [0.1.22](https://github.com/offline-ai/ai-shell.js/compare/v0.1.21...v0.1.22) (2024-12-22)
