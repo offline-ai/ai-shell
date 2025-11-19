@@ -26,23 +26,22 @@
     "which": "^5.0.0"
   },
   "devDependencies": {
-    "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^4",
     "@types/chai": "^5",
     "@types/lodash-es": "^4.17.12",
     "@types/mocha": "^10",
-    "@types/node": "^22",
+    "@types/node": "^24.3.0",
     "chai": "^5",
-    "eslint": "^9",
-    "eslint-config-oclif": "^6.0.28",
-    "eslint-config-prettier": "^10",
+    "eslint": "^9.34.0",
+    "eslint-config-oclif": "^6.0.104",
+    "eslint-config-prettier": "^10.1.8",
     "mocha": "^11",
-    "oclif": "^4.17.41",
+    "oclif": "^4.22.16",
     "shx": "^0.3.4",
     "ts-node": "^10",
-    "tsup": "^8.4.0",
-    "tsx": "^4.19.3",
-    "typescript": "^5"
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.5",
+    "typescript": "~5.7.3"
   },
   "engines": {
     "node": ">=18.0.0"
